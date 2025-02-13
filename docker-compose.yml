@@ -1,0 +1,31 @@
+services:
+  api:
+    container_name: api
+    image: frreimon/api:2.6
+    restart: always
+    ports:
+      - "80:8000"
+    volumes:
+      - ./API/app:/code/app
+    env_file:
+      - .env
+
+  modbus-server:
+      container_name: modbus-server
+      build:
+        dockerfile: Dockerfile-modbus-server
+      #image: oitc/modbus-server
+      restart: always
+      command: -f /server_config.json
+      ports:
+        - 5020:5020
+      volumes:
+        - ./modbus_server_initial.json:/server_config.json
+
+  jupyter:
+    image: jupyter/minimal-notebook
+    volumes:
+      - ./work:/home/jovyan/work
+    ports:
+      - 8888:8888
+    container_name: jupyter_notebook
